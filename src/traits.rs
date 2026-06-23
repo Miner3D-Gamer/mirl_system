@@ -11,11 +11,7 @@ pub enum WindowingErrors {}
 /// Set the position of a window
 pub const trait SetWindowPosition {
     /// Set the position of a window, ¯\_(ツ)_/¯
-    fn set_window_position(
-        handle: &raw_window_handle::RawWindowHandle,
-        x: i32,
-        y: i32,
-    ) -> bool;
+    fn set_window_position(handle: &raw_window_handle::RawWindowHandle, x: i32, y: i32) -> bool;
 }
 
 /// The simplest actions you would expect from interacting with the os
@@ -28,22 +24,13 @@ pub const trait DefaultWindowing {
         level: WindowRenderLayer,
     ) -> bool;
     /// Get the current position of a window
-    fn get_window_position(
-        handle: &raw_window_handle::RawWindowHandle,
-    ) -> (i32, i32);
+    fn get_window_position(handle: &raw_window_handle::RawWindowHandle) -> (i32, i32);
     /// Get the current size of a window
-    fn get_window_size(
-        handle: &raw_window_handle::RawWindowHandle,
-    ) -> (i32, i32);
+    fn get_window_size(handle: &raw_window_handle::RawWindowHandle) -> (i32, i32);
     /// Get the current size of a window, including its decorations. Windows for example likes to add an 8 pixel padding both to the left and right sides of a window
-    fn get_window_hitbox_size(
-        handle: &raw_window_handle::RawWindowHandle,
-    ) -> (i32, i32);
+    fn get_window_hitbox_size(handle: &raw_window_handle::RawWindowHandle) -> (i32, i32);
     /// Resize the desired window to the desired size
-    fn set_window_size(
-        handle: &raw_window_handle::RawWindowHandle,
-        size: (i32, i32),
-    ) -> bool;
+    fn set_window_size(handle: &raw_window_handle::RawWindowHandle, size: (i32, i32)) -> bool;
 }
 
 /// Transparency information/Manipulation
@@ -54,19 +41,13 @@ pub const trait Transparency {
         color: (u8, u8, u8),
     ) -> bool;
     /// Sets the opacity ¯\_(ツ)_/¯
-    fn set_window_opacity(
-        handle: &raw_window_handle::RawWindowHandle,
-        opacity: u8,
-    ) -> bool;
+    fn set_window_opacity(handle: &raw_window_handle::RawWindowHandle, opacity: u8) -> bool;
 }
 
 /// Decoration like os menu manipulation
 pub const trait Decoration {
     /// Remove/Give a window their border
-    fn set_window_borderless(
-        handle: &raw_window_handle::RawWindowHandle,
-        boolean: bool,
-    ) -> bool;
+    fn set_window_borderless(handle: &raw_window_handle::RawWindowHandle, boolean: bool) -> bool;
 }
 
 /// Stuff I couldn't categorize yet
@@ -79,9 +60,7 @@ pub const trait Misc {
     /// Get ALL windows the os reveals
     fn get_all_windows() -> Vec<raw_window_handle::RawWindowHandle>;
     /// Get the title of the application associated with the given id
-    fn get_title_using_id(
-        handle: &raw_window_handle::RawWindowHandle,
-    ) -> String;
+    fn get_title_using_id(handle: &raw_window_handle::RawWindowHandle) -> String;
     #[allow(clippy::fn_params_excessive_bools)]
     /// Get the title of a window
     fn get_id_using_title(
@@ -104,20 +83,14 @@ pub const trait Misc {
     fn get_window_z(handle: &raw_window_handle::RawWindowHandle) -> u32;
 
     /// Sets the z ordering of the current window - How does [`WindowLevel`] affect ordering? No clue.
-    fn set_window_z(
-        handle: &raw_window_handle::RawWindowHandle,
-        z: u32,
-    ) -> bool;
+    fn set_window_z(handle: &raw_window_handle::RawWindowHandle, z: u32) -> bool;
     /// Sets the z ordering of the current window - How does [`WindowLevel`] affect ordering? No clue.
     fn set_window_z_after(
         handle: &raw_window_handle::RawWindowHandle,
         after: &raw_window_handle::RawWindowHandle,
     ) -> bool;
     /// Set the priority of a running process
-    fn set_cpu_priority(
-        handle: &raw_window_handle::RawWindowHandle,
-        priority: ProcessCpuPriority,
-    );
+    fn set_cpu_priority(handle: &raw_window_handle::RawWindowHandle, priority: ProcessCpuPriority);
 }
 
 /// Additional actions for tinkering with the taskbar
@@ -144,16 +117,9 @@ pub const trait TaskBar {
     //     overlay: &Buffer,
     // );
     /// Loading indicators
-    fn set_icon_state(
-        handle: &raw_window_handle::RawWindowHandle,
-        state: &TaskbarLoadingState,
-    );
+    fn set_icon_state(handle: &raw_window_handle::RawWindowHandle, state: &TaskbarLoadingState);
     /// Loading progress
-    fn set_icon_progress(
-        handle: &raw_window_handle::RawWindowHandle,
-        current: u64,
-        total: u64,
-    );
+    fn set_icon_progress(handle: &raw_window_handle::RawWindowHandle, current: u64, total: u64);
 }
 /// The state of a window - Is it here or minimized away into an icon?
 pub const trait Iconized {
@@ -181,31 +147,27 @@ pub const trait ObjectInCenterOfScreen {
 }
 impl<S: Screen> ObjectInCenterOfScreen for S {
     fn get_center_of_screen_for_object(size: (i32, i32)) -> (i32, i32) {
-        let (screen_width, screen_height): (i32, i32) =
-            S::get_screen_resolution();
+        let (screen_width, screen_height): (i32, i32) = S::get_screen_resolution();
 
-        (screen_width / 2 - size.0 / 2, screen_height / 2 - size.1 / 2)
+        (
+            screen_width / 2 - size.0 / 2,
+            screen_height / 2 - size.1 / 2,
+        )
     }
 }
+#[cfg(feature = "font_support")]
 /// Get the system font
 pub trait SystemFontProvider {
     /// Get a font file, use [`to_font`](FileData::to_font) to convert the file into a font
     ///
     /// # Errors
     /// Plenty of things can go wrong from the file being hidden to the Os refusing to answer
-    fn get_system_font_file(
-        &self,
-    ) -> Result<BinaryData, Box<dyn std::error::Error>>;
+    fn get_system_font_file(&self) -> Result<BinaryData, Box<dyn std::error::Error>>;
     /// Get a font file, use [`to_font`](FileData::to_font) to convert the file into a font
     ///
     /// # Errors
     /// Plenty of things can go wrong from the file being hidden to the Os refusing to answer
-    fn get_system_font(
-        &self,
-    ) -> Result<
-        mirl_core::dependencies::fontdue::Font,
-        Box<dyn std::error::Error>,
-    > {
+    fn get_system_font(&self) -> Result<fontdue::Font, Box<dyn std::error::Error>> {
         let file = self.get_system_font_file()?;
         file.to_font()
     }

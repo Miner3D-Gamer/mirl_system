@@ -7,18 +7,10 @@
 pub struct WindowsActions {}
 
 impl SetWindowPosition for WindowsActions {
-    fn set_window_position(
-        handle: &raw_window_handle::RawWindowHandle,
-        x: i32,
-        y: i32,
-    ) -> bool {
+    fn set_window_position(handle: &raw_window_handle::RawWindowHandle, x: i32, y: i32) -> bool {
         match handle {
             raw_window_handle::RawWindowHandle::Win32(handle) => {
-                set_window_position_raw(
-                    windows::Win32::Foundation::HWND(handle.hwnd.get()),
-                    x,
-                    y,
-                );
+                set_window_position_raw(windows::Win32::Foundation::HWND(handle.hwnd.get()), x, y);
                 true
             }
             _ => false,
@@ -33,57 +25,39 @@ impl DefaultWindowing for WindowsActions {
     ) -> bool {
         match handle {
             raw_window_handle::RawWindowHandle::Win32(handle) => {
-                set_window_level_raw(
-                    windows::Win32::Foundation::HWND(handle.hwnd.get()),
-                    level,
-                );
+                set_window_level_raw(windows::Win32::Foundation::HWND(handle.hwnd.get()), level);
                 true
             }
             _ => false,
         }
     }
-    fn get_window_position(
-        handle: &raw_window_handle::RawWindowHandle,
-    ) -> (i32, i32) {
+    fn get_window_position(handle: &raw_window_handle::RawWindowHandle) -> (i32, i32) {
         match handle {
             raw_window_handle::RawWindowHandle::Win32(handle) => {
-                get_window_position_raw(windows::Win32::Foundation::HWND(
-                    handle.hwnd.get(),
-                ))
-                .unwrap_or((i32::MIN, i32::MIN))
+                get_window_position_raw(windows::Win32::Foundation::HWND(handle.hwnd.get()))
+                    .unwrap_or((i32::MIN, i32::MIN))
             }
             _ => (i32::MIN, i32::MIN),
         }
     }
-    fn get_window_size(
-        handle: &raw_window_handle::RawWindowHandle,
-    ) -> (i32, i32) {
+    fn get_window_size(handle: &raw_window_handle::RawWindowHandle) -> (i32, i32) {
         match handle {
             raw_window_handle::RawWindowHandle::Win32(handle) => {
-                get_window_size_raw(windows::Win32::Foundation::HWND(
-                    handle.hwnd.get(),
-                ))
+                get_window_size_raw(windows::Win32::Foundation::HWND(handle.hwnd.get()))
             }
             _ => (i32::MIN, i32::MIN),
         }
     }
-    fn get_window_hitbox_size(
-        handle: &raw_window_handle::RawWindowHandle,
-    ) -> (i32, i32) {
+    fn get_window_hitbox_size(handle: &raw_window_handle::RawWindowHandle) -> (i32, i32) {
         match handle {
             raw_window_handle::RawWindowHandle::Win32(handle) => {
-                get_window_hitbox_size_raw(windows::Win32::Foundation::HWND(
-                    handle.hwnd.get(),
-                ))
-                .unwrap_or((i32::MIN, i32::MIN))
+                get_window_hitbox_size_raw(windows::Win32::Foundation::HWND(handle.hwnd.get()))
+                    .unwrap_or((i32::MIN, i32::MIN))
             }
             _ => (i32::MIN, i32::MIN),
         }
     }
-    fn set_window_size(
-        handle: &raw_window_handle::RawWindowHandle,
-        size: (i32, i32),
-    ) -> bool {
+    fn set_window_size(handle: &raw_window_handle::RawWindowHandle, size: (i32, i32)) -> bool {
         match handle {
             raw_window_handle::RawWindowHandle::Win32(handle) => {
                 resize(handle.hwnd.get() as *mut std::ffi::c_void, size);
@@ -100,20 +74,15 @@ impl Transparency for WindowsActions {
         color: (u8, u8, u8),
     ) -> bool {
         match handle {
-            raw_window_handle::RawWindowHandle::Win32(handle) => {
-                make_color_transparent_raw(
-                    windows::Win32::Foundation::HWND(handle.hwnd.get()),
-                    color,
-                    0,
-                )
-            }
+            raw_window_handle::RawWindowHandle::Win32(handle) => make_color_transparent_raw(
+                windows::Win32::Foundation::HWND(handle.hwnd.get()),
+                color,
+                0,
+            ),
             _ => false,
         }
     }
-    fn set_window_opacity(
-        handle: &raw_window_handle::RawWindowHandle,
-        opacity: u8,
-    ) -> bool {
+    fn set_window_opacity(handle: &raw_window_handle::RawWindowHandle, opacity: u8) -> bool {
         match handle {
             raw_window_handle::RawWindowHandle::Win32(handle) => {
                 set_window_opacity_raw(
@@ -127,20 +96,13 @@ impl Transparency for WindowsActions {
     }
 }
 impl Decoration for WindowsActions {
-    fn set_window_borderless(
-        handle: &raw_window_handle::RawWindowHandle,
-        boolean: bool,
-    ) -> bool {
+    fn set_window_borderless(handle: &raw_window_handle::RawWindowHandle, boolean: bool) -> bool {
         match handle {
             raw_window_handle::RawWindowHandle::Win32(handle) => {
                 if boolean {
-                    make_window_borderless_raw(
-                        windows::Win32::Foundation::HWND(handle.hwnd.get()),
-                    );
+                    make_window_borderless_raw(windows::Win32::Foundation::HWND(handle.hwnd.get()));
                 } else {
-                    give_window_a_border_raw(windows::Win32::Foundation::HWND(
-                        handle.hwnd.get(),
-                    ));
+                    give_window_a_border_raw(windows::Win32::Foundation::HWND(handle.hwnd.get()));
                 }
                 true
             }
@@ -156,13 +118,13 @@ impl Misc for WindowsActions {
         match handle {
             raw_window_handle::RawWindowHandle::Win32(handle) => {
                 if boolean {
-                    hide_from_taskbar_and_alt_tab_raw(
-                        windows::Win32::Foundation::HWND(handle.hwnd.get()),
-                    );
+                    hide_from_taskbar_and_alt_tab_raw(windows::Win32::Foundation::HWND(
+                        handle.hwnd.get(),
+                    ));
                 } else {
-                    show_in_taskbar_and_alt_tab_raw(
-                        windows::Win32::Foundation::HWND(handle.hwnd.get()),
-                    );
+                    show_in_taskbar_and_alt_tab_raw(windows::Win32::Foundation::HWND(
+                        handle.hwnd.get(),
+                    ));
                 }
                 true
             }
@@ -181,14 +143,10 @@ impl Misc for WindowsActions {
         }
         new
     }
-    fn get_title_using_id(
-        handle: &raw_window_handle::RawWindowHandle,
-    ) -> String {
+    fn get_title_using_id(handle: &raw_window_handle::RawWindowHandle) -> String {
         match handle {
             raw_window_handle::RawWindowHandle::Win32(handle) => {
-                get_title_using_id_raw(
-                    handle.hwnd.get() as *mut std::ffi::c_void
-                )
+                get_title_using_id_raw(handle.hwnd.get() as *mut std::ffi::c_void)
             }
             _ => String::new(),
         }
@@ -200,13 +158,7 @@ impl Misc for WindowsActions {
         include_hidden: bool,
         just_one: bool,
     ) -> Option<Vec<raw_window_handle::RawWindowHandle>> {
-        get_window_id_by_title(
-            title,
-            exact_match,
-            case_sensitive,
-            include_hidden,
-            just_one,
-        )
+        get_window_id_by_title(title, exact_match, case_sensitive, include_hidden, just_one)
     }
     fn capture_screen() -> Option<Buffer> {
         capture_screen_raw()
@@ -220,13 +172,9 @@ impl Misc for WindowsActions {
     ) {
         if let raw_window_handle::RawWindowHandle::Win32(handle) = handle {
             if click_through {
-                make_window_click_through_raw(
-                    windows::Win32::Foundation::HWND(handle.hwnd.get()),
-                );
+                make_window_click_through_raw(windows::Win32::Foundation::HWND(handle.hwnd.get()));
             } else {
-                make_window_click_solid_raw(windows::Win32::Foundation::HWND(
-                    handle.hwnd.get(),
-                ));
+                make_window_click_solid_raw(windows::Win32::Foundation::HWND(handle.hwnd.get()));
             }
         }
     }
@@ -234,23 +182,16 @@ impl Misc for WindowsActions {
         match handle {
             #[cfg(target_os = "windows")]
             raw_window_handle::RawWindowHandle::Win32(handle) => {
-                get_z_raw(windows::Win32::Foundation::HWND(handle.hwnd.get()))
-                    .unwrap_or(u32::MIN)
+                get_z_raw(windows::Win32::Foundation::HWND(handle.hwnd.get())).unwrap_or(u32::MIN)
             }
             _ => u32::MIN,
         }
     }
-    fn set_window_z(
-        handle: &raw_window_handle::RawWindowHandle,
-        z: u32,
-    ) -> bool {
+    fn set_window_z(handle: &raw_window_handle::RawWindowHandle, z: u32) -> bool {
         match handle {
             #[cfg(target_os = "windows")]
             raw_window_handle::RawWindowHandle::Win32(handle) => {
-                set_z_raw(
-                    windows::Win32::Foundation::HWND(handle.hwnd.get()),
-                    z,
-                );
+                set_z_raw(windows::Win32::Foundation::HWND(handle.hwnd.get()), z);
                 true
             }
             _ => false,
@@ -276,15 +217,9 @@ impl Misc for WindowsActions {
             _ => false,
         }
     }
-    fn set_cpu_priority(
-        handle: &raw_window_handle::RawWindowHandle,
-        priority: ProcessCpuPriority,
-    ) {
+    fn set_cpu_priority(handle: &raw_window_handle::RawWindowHandle, priority: ProcessCpuPriority) {
         if let raw_window_handle::RawWindowHandle::Win32(hwnd) = handle {
-            set_cpu_priority(
-                windows::Win32::Foundation::HWND(hwnd.hwnd.get()),
-                priority,
-            );
+            set_cpu_priority(windows::Win32::Foundation::HWND(hwnd.hwnd.get()), priority);
         }
     }
 }
@@ -296,8 +231,8 @@ use mirl_graphics::u32_color_casting::PackChannelsIntoColor;
 // use mirl_extensions::*;
 // TODO: Replace these imports with full paths where the items are used
 use windows::Win32::UI::WindowsAndMessaging::{
-    GWL_EXSTYLE, GetClientRect, GetWindowLongW, SWP_NOSIZE, SWP_NOZORDER,
-    SetWindowLongW, WS_EX_LAYERED, WS_EX_TRANSPARENT,
+    GWL_EXSTYLE, GetClientRect, GetWindowLongW, SWP_NOSIZE, SWP_NOZORDER, SetWindowLongW,
+    WS_EX_LAYERED, WS_EX_TRANSPARENT,
 };
 use windows::{
     Win32::Graphics::Gdi::{
@@ -311,9 +246,7 @@ use windows::{
         SRCCOPY, //GetPixel
         SelectObject,
     },
-    Win32::UI::WindowsAndMessaging::{
-        GetDesktopWindow, GetShellWindow, GetWindowRect,
-    },
+    Win32::UI::WindowsAndMessaging::{GetDesktopWindow, GetShellWindow, GetWindowRect},
 };
 
 use crate::traits::*;
@@ -374,9 +307,8 @@ pub fn capture_screen_raw() -> Option<Buffer> {
         // Get the bitmap data
         let bmi = windows::Win32::Graphics::Gdi::BITMAPINFO {
             bmiHeader: windows::Win32::Graphics::Gdi::BITMAPINFOHEADER {
-                biSize: std::mem::size_of::<
-                    windows::Win32::Graphics::Gdi::BITMAPINFOHEADER,
-                >() as u32,
+                biSize: std::mem::size_of::<windows::Win32::Graphics::Gdi::BITMAPINFOHEADER>()
+                    as u32,
                 biWidth: width,
                 biHeight: -height, // Top-down DIB
                 biPlanes: 1,
@@ -469,9 +401,8 @@ pub fn capture_desktop_background_image() -> Option<Buffer> {
         // Get the bitmap data
         let bmi = windows::Win32::Graphics::Gdi::BITMAPINFO {
             bmiHeader: windows::Win32::Graphics::Gdi::BITMAPINFOHEADER {
-                biSize: std::mem::size_of::<
-                    windows::Win32::Graphics::Gdi::BITMAPINFOHEADER,
-                >() as u32,
+                biSize: std::mem::size_of::<windows::Win32::Graphics::Gdi::BITMAPINFOHEADER>()
+                    as u32,
                 biWidth: width,
                 biHeight: -height, // Top-down DIB
                 biPlanes: 1,
@@ -536,9 +467,7 @@ pub fn make_color_transparent_raw(
 }
 #[must_use]
 /// Get the position of a window if that window exists
-pub fn get_window_position_raw(
-    hwnd: windows::Win32::Foundation::HWND,
-) -> Option<(i32, i32)> {
+pub fn get_window_position_raw(hwnd: windows::Win32::Foundation::HWND) -> Option<(i32, i32)> {
     unsafe {
         let mut rect = windows::Win32::Foundation::RECT::default();
         if GetWindowRect(hwnd, &raw mut rect).as_bool() {
@@ -551,11 +480,7 @@ pub fn get_window_position_raw(
 /// Set the position of a window
 ///
 /// TODO: Check the other parameters of `windows::Win32::UI::WindowsAndMessaging::SetWindowPos`
-pub fn set_window_position_raw(
-    hwnd: windows::Win32::Foundation::HWND,
-    x: i32,
-    y: i32,
-) {
+pub fn set_window_position_raw(hwnd: windows::Win32::Foundation::HWND, x: i32, y: i32) {
     unsafe {
         windows::Win32::UI::WindowsAndMessaging::SetWindowPos(
             hwnd,
@@ -599,17 +524,13 @@ pub fn make_window_click_solid_raw(hwnd: windows::Win32::Foundation::HWND) {
 /// Inverse: [`give_window_a_border_raw`]
 pub fn make_window_borderless_raw(hwnd: windows::Win32::Foundation::HWND) {
     unsafe {
-        let style = GetWindowLongW(
-            hwnd,
-            windows::Win32::UI::WindowsAndMessaging::GWL_STYLE,
-        ) as u32;
+        let style = GetWindowLongW(hwnd, windows::Win32::UI::WindowsAndMessaging::GWL_STYLE) as u32;
         SetWindowLongW(
             hwnd,
             windows::Win32::UI::WindowsAndMessaging::GWL_STYLE,
             (style
                 & !(windows::Win32::UI::WindowsAndMessaging::WS_CAPTION.0
-                    | windows::Win32::UI::WindowsAndMessaging::WS_THICKFRAME.0))
-                as i32,
+                    | windows::Win32::UI::WindowsAndMessaging::WS_THICKFRAME.0)) as i32,
         );
         windows::Win32::UI::WindowsAndMessaging::SetWindowPos(
             hwnd,
@@ -631,17 +552,13 @@ pub fn make_window_borderless_raw(hwnd: windows::Win32::Foundation::HWND) {
 /// Inverse: [`make_window_borderless_raw`]
 pub fn give_window_a_border_raw(hwnd: windows::Win32::Foundation::HWND) {
     unsafe {
-        let style = GetWindowLongW(
-            hwnd,
-            windows::Win32::UI::WindowsAndMessaging::GWL_STYLE,
-        ) as u32;
+        let style = GetWindowLongW(hwnd, windows::Win32::UI::WindowsAndMessaging::GWL_STYLE) as u32;
         SetWindowLongW(
             hwnd,
             windows::Win32::UI::WindowsAndMessaging::GWL_STYLE,
             (style
                 | windows::Win32::UI::WindowsAndMessaging::WS_CAPTION.0
-                | windows::Win32::UI::WindowsAndMessaging::WS_THICKFRAME.0)
-                as i32,
+                | windows::Win32::UI::WindowsAndMessaging::WS_THICKFRAME.0) as i32,
         );
         windows::Win32::UI::WindowsAndMessaging::SetWindowPos(
             hwnd,
@@ -660,18 +577,14 @@ pub fn give_window_a_border_raw(hwnd: windows::Win32::Foundation::HWND) {
 /// Hide a window from the taskbar and alt tab
 ///
 /// Inverse: [`show_in_taskbar_and_alt_tab_raw`]
-pub fn hide_from_taskbar_and_alt_tab_raw(
-    hwnd: windows::Win32::Foundation::HWND,
-) {
+pub fn hide_from_taskbar_and_alt_tab_raw(hwnd: windows::Win32::Foundation::HWND) {
     unsafe {
         let ex_style = GetWindowLongW(hwnd, GWL_EXSTYLE) as u32;
         SetWindowLongW(
             hwnd,
             GWL_EXSTYLE,
-            ((ex_style
-                | windows::Win32::UI::WindowsAndMessaging::WS_EX_TOOLWINDOW.0)
-                & !windows::Win32::UI::WindowsAndMessaging::WS_EX_APPWINDOW.0)
-                as i32,
+            ((ex_style | windows::Win32::UI::WindowsAndMessaging::WS_EX_TOOLWINDOW.0)
+                & !windows::Win32::UI::WindowsAndMessaging::WS_EX_APPWINDOW.0) as i32,
         );
         windows::Win32::UI::WindowsAndMessaging::SetWindowPos(
             hwnd,
@@ -696,10 +609,8 @@ pub fn show_in_taskbar_and_alt_tab_raw(hwnd: windows::Win32::Foundation::HWND) {
         SetWindowLongW(
             hwnd,
             GWL_EXSTYLE,
-            ((ex_style
-                | windows::Win32::UI::WindowsAndMessaging::WS_EX_APPWINDOW.0)
-                & !windows::Win32::UI::WindowsAndMessaging::WS_EX_TOOLWINDOW.0)
-                as i32,
+            ((ex_style | windows::Win32::UI::WindowsAndMessaging::WS_EX_APPWINDOW.0)
+                & !windows::Win32::UI::WindowsAndMessaging::WS_EX_TOOLWINDOW.0) as i32,
         );
         windows::Win32::UI::WindowsAndMessaging::SetWindowPos(
             hwnd,
@@ -716,10 +627,7 @@ pub fn show_in_taskbar_and_alt_tab_raw(hwnd: windows::Win32::Foundation::HWND) {
     }
 }
 /// Set the transparency of the window
-pub fn set_window_opacity_raw(
-    hwnd: windows::Win32::Foundation::HWND,
-    alpha: u8,
-) {
+pub fn set_window_opacity_raw(hwnd: windows::Win32::Foundation::HWND, alpha: u8) {
     unsafe {
         let ex_style = GetWindowLongW(hwnd, GWL_EXSTYLE) as u32;
         SetWindowLongW(hwnd, GWL_EXSTYLE, (ex_style | WS_EX_LAYERED.0) as i32);
@@ -781,14 +689,16 @@ pub fn set_z_raw(hwnd: windows::Win32::Foundation::HWND, index: u32) {
         );
         while order == index {
             if current.0 == hwnd.0 {
-                windows::Win32::UI::WindowsAndMessaging::      SetWindowPos(
+                windows::Win32::UI::WindowsAndMessaging::SetWindowPos(
                     hwnd,
                     current,
                     0,
                     0,
                     0,
                     0,
-                    windows::Win32::UI::WindowsAndMessaging::SWP_NOMOVE | SWP_NOSIZE | windows::Win32::UI::WindowsAndMessaging::SWP_NOACTIVATE,
+                    windows::Win32::UI::WindowsAndMessaging::SWP_NOMOVE
+                        | SWP_NOSIZE
+                        | windows::Win32::UI::WindowsAndMessaging::SWP_NOACTIVATE,
                 );
             }
             current = windows::Win32::UI::WindowsAndMessaging::GetWindow(
@@ -876,10 +786,7 @@ use windows::Win32::UI::WindowsAndMessaging::{
 };
 
 /// Set the [`WindowRenderLayer`] of a window
-pub fn set_window_level_raw(
-    hwnd: windows::Win32::Foundation::HWND,
-    level: WindowRenderLayer,
-) {
+pub fn set_window_level_raw(hwnd: windows::Win32::Foundation::HWND, level: WindowRenderLayer) {
     let insert_after = match level {
         WindowRenderLayer::AlwaysOnBottom => HWND_BOTTOM,
         WindowRenderLayer::Normal => HWND_NOTOPMOST,
@@ -902,9 +809,7 @@ pub fn set_window_level_raw(
 use raw_window_handle::{RawWindowHandle, Win32WindowHandle};
 use windows_sys::Win32::{
     Foundation::{HWND, LPARAM},
-    UI::WindowsAndMessaging::{
-        EnumWindows, GetWindowTextLengthW, GetWindowTextW, IsWindowVisible,
-    },
+    UI::WindowsAndMessaging::{EnumWindows, GetWindowTextLengthW, GetWindowTextW, IsWindowVisible},
 };
 #[allow(missing_docs)]
 /// A data struct temporarily used when searching for a window
@@ -923,10 +828,7 @@ pub struct WindowSearchData {
 ///
 /// # Safety
 /// Unknown. Best not to use.
-pub unsafe extern "system" fn enum_windows_proc(
-    hwnd: HWND,
-    lparam: LPARAM,
-) -> i32 {
+pub unsafe extern "system" fn enum_windows_proc(hwnd: HWND, lparam: LPARAM) -> i32 {
     let search_data = &mut *(lparam as *mut WindowSearchData);
 
     if !search_data.include_hidden && IsWindowVisible(hwnd) == 0 {
@@ -963,7 +865,10 @@ pub unsafe extern "system" fn enum_windows_proc(
     }
 
     if matches {
-        search_data.found_hwnds.get_or_insert_with(Vec::new).push(hwnd);
+        search_data
+            .found_hwnds
+            .get_or_insert_with(Vec::new)
+            .push(hwnd);
 
         if search_data.just_one {
             return 0;
@@ -1010,9 +915,7 @@ mod tests {
 
     #[test]
     fn test_find_notepad() {
-        if let Some(handle) =
-            get_window_id_by_title("Notepad", false, true, false, false)
-        {
+        if let Some(handle) = get_window_id_by_title("Notepad", false, true, false, false) {
             println!("Found Notepad window: {handle:?}");
         } else {
             println!("Notepad window not found");
@@ -1095,9 +998,7 @@ pub fn get_all_windows_raw() -> Vec<windows::Win32::Foundation::HWND> {
 }
 #[must_use]
 /// get the "hitbox" of a window
-pub fn get_window_hitbox_size_raw(
-    hwnd: windows::Win32::Foundation::HWND,
-) -> Option<(i32, i32)> {
+pub fn get_window_hitbox_size_raw(hwnd: windows::Win32::Foundation::HWND) -> Option<(i32, i32)> {
     unsafe {
         let mut rect = windows::Win32::Foundation::RECT::default();
         if GetWindowRect(hwnd, &raw mut rect).as_bool() {
@@ -1111,9 +1012,7 @@ pub fn get_window_hitbox_size_raw(
 /// Get the size of a window
 ///
 /// Warning: Returns (0, 0) for windows that don't exist
-pub fn get_window_size_raw(
-    hwnd: windows::Win32::Foundation::HWND,
-) -> (i32, i32) {
+pub fn get_window_size_raw(hwnd: windows::Win32::Foundation::HWND) -> (i32, i32) {
     unsafe {
         let mut rect = windows::Win32::Foundation::RECT::default();
         GetClientRect(hwnd, &raw mut rect);
@@ -1122,17 +1021,11 @@ pub fn get_window_size_raw(
 }
 #[allow(clippy::not_unsafe_ptr_arg_deref)]
 /// Get the window title using the hwnd
-pub fn get_title_using_id_raw(
-    hwnd: windows_sys::Win32::Foundation::HWND,
-) -> String {
+pub fn get_title_using_id_raw(hwnd: windows_sys::Win32::Foundation::HWND) -> String {
     let mut title_buf = [0u16; 512];
     let title_len;
     unsafe {
-        title_len = GetWindowTextW(
-            hwnd,
-            title_buf.as_mut_ptr(),
-            title_buf.len() as i32,
-        );
+        title_len = GetWindowTextW(hwnd, title_buf.as_mut_ptr(), title_buf.len() as i32);
     }
 
     if title_len > 0 {
@@ -1144,41 +1037,33 @@ pub fn get_title_using_id_raw(
 
 use windows::Win32::{
     System::Threading::{
-        ABOVE_NORMAL_PRIORITY_CLASS, BELOW_NORMAL_PRIORITY_CLASS,
-        HIGH_PRIORITY_CLASS, IDLE_PRIORITY_CLASS, NORMAL_PRIORITY_CLASS,
-        OpenProcess, OpenThread, PROCESS_SET_INFORMATION,
-        REALTIME_PRIORITY_CLASS, SetPriorityClass, SetThreadPriority,
-        THREAD_PRIORITY_ABOVE_NORMAL, THREAD_PRIORITY_BELOW_NORMAL,
-        THREAD_PRIORITY_HIGHEST, THREAD_PRIORITY_IDLE, THREAD_PRIORITY_NORMAL,
-        THREAD_PRIORITY_TIME_CRITICAL, THREAD_SET_INFORMATION,
+        ABOVE_NORMAL_PRIORITY_CLASS, BELOW_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS,
+        IDLE_PRIORITY_CLASS, NORMAL_PRIORITY_CLASS, OpenProcess, OpenThread,
+        PROCESS_SET_INFORMATION, REALTIME_PRIORITY_CLASS, SetPriorityClass, SetThreadPriority,
+        THREAD_PRIORITY_ABOVE_NORMAL, THREAD_PRIORITY_BELOW_NORMAL, THREAD_PRIORITY_HIGHEST,
+        THREAD_PRIORITY_IDLE, THREAD_PRIORITY_NORMAL, THREAD_PRIORITY_TIME_CRITICAL,
+        THREAD_SET_INFORMATION,
     },
     UI::WindowsAndMessaging::GetWindowThreadProcessId,
 };
 
 /// Set the priority of a running process
-pub fn set_cpu_priority(
-    hwnd: windows::Win32::Foundation::HWND,
-    priority: ProcessCpuPriority,
-) {
+pub fn set_cpu_priority(hwnd: windows::Win32::Foundation::HWND, priority: ProcessCpuPriority) {
     unsafe {
         let mut process_id = 0u32;
-        let thread_id =
-            GetWindowThreadProcessId(hwnd, Some(&raw mut process_id));
+        let thread_id = GetWindowThreadProcessId(hwnd, Some(&raw mut process_id));
 
         if thread_id == 0 {
             return; // Failed to get thread ID
         }
 
         // Open the process with permission to set priority
-        let Ok(process) =
-            OpenProcess(PROCESS_SET_INFORMATION, false, process_id)
-        else {
+        let Ok(process) = OpenProcess(PROCESS_SET_INFORMATION, false, process_id) else {
             return;
         };
 
         // Open the thread with permission to set priority
-        let Ok(thread) = OpenThread(THREAD_SET_INFORMATION, false, thread_id)
-        else {
+        let Ok(thread) = OpenThread(THREAD_SET_INFORMATION, false, thread_id) else {
             return;
         };
 
@@ -1205,8 +1090,7 @@ pub fn set_cpu_priority(
             }
             ProcessCpuPriority::Realtime => {
                 let _ = SetPriorityClass(process, REALTIME_PRIORITY_CLASS);
-                let _ =
-                    SetThreadPriority(thread, THREAD_PRIORITY_TIME_CRITICAL);
+                let _ = SetThreadPriority(thread, THREAD_PRIORITY_TIME_CRITICAL);
             }
         }
     }
@@ -1228,22 +1112,13 @@ pub fn set_cpu_priority(
 // }
 
 impl TaskBar for WindowsActions {
-    fn set_icon_state(
-        handle: &raw_window_handle::RawWindowHandle,
-        state: &TaskbarLoadingState,
-    ) {
+    fn set_icon_state(handle: &raw_window_handle::RawWindowHandle, state: &TaskbarLoadingState) {
         if let raw_window_handle::RawWindowHandle::Win32(raw) = handle {
-            let _ = set_taskbar_progress_state(
-                windows::Win32::Foundation::HWND(raw.hwnd.get()),
-                state,
-            );
+            let _ =
+                set_taskbar_progress_state(windows::Win32::Foundation::HWND(raw.hwnd.get()), state);
         }
     }
-    fn set_icon_progress(
-        handle: &raw_window_handle::RawWindowHandle,
-        current: u64,
-        total: u64,
-    ) {
+    fn set_icon_progress(handle: &raw_window_handle::RawWindowHandle, current: u64, total: u64) {
         if let raw_window_handle::RawWindowHandle::Win32(raw) = handle {
             let _ = set_taskbar_progress_value(
                 windows::Win32::Foundation::HWND(raw.hwnd.get()),
@@ -1257,15 +1132,13 @@ impl TaskBar for WindowsActions {
 use windows::Win32::{
     System::Com::{CLSCTX_ALL, CoCreateInstance},
     UI::Shell::{
-        ITaskbarList3, TBPF_ERROR, TBPF_INDETERMINATE, TBPF_NOPROGRESS,
-        TBPF_NORMAL, TBPF_PAUSED, TBPFLAG, TaskbarList,
+        ITaskbarList3, TBPF_ERROR, TBPF_INDETERMINATE, TBPF_NOPROGRESS, TBPF_NORMAL, TBPF_PAUSED,
+        TBPFLAG, TaskbarList,
     },
 };
 /// Convert between `TaskbarLoadingState` and TBPFLAG
 #[must_use]
-pub const fn map_state_to_windows_state(
-    state: &TaskbarLoadingState,
-) -> TBPFLAG {
+pub const fn map_state_to_windows_state(state: &TaskbarLoadingState) -> TBPFLAG {
     match state {
         TaskbarLoadingState::NoBar => TBPF_NOPROGRESS,
         TaskbarLoadingState::Error => TBPF_ERROR,
@@ -1283,8 +1156,7 @@ pub fn set_taskbar_progress_state(
     state: &TaskbarLoadingState,
 ) -> windows::core::Result<()> {
     unsafe {
-        let taskbar: ITaskbarList3 =
-            CoCreateInstance(&TaskbarList, None, CLSCTX_ALL)?;
+        let taskbar: ITaskbarList3 = CoCreateInstance(&TaskbarList, None, CLSCTX_ALL)?;
         taskbar.HrInit()?;
         taskbar.SetProgressState(hwnd, map_state_to_windows_state(state))?;
     }
@@ -1301,8 +1173,7 @@ pub fn set_taskbar_progress_value(
     total: u64,
 ) -> windows::core::Result<()> {
     unsafe {
-        let taskbar: ITaskbarList3 =
-            CoCreateInstance(&TaskbarList, None, CLSCTX_ALL)?;
+        let taskbar: ITaskbarList3 = CoCreateInstance(&TaskbarList, None, CLSCTX_ALL)?;
         taskbar.HrInit()?;
         taskbar.SetProgressValue(hwnd, completed, total)?;
     }
@@ -1316,16 +1187,10 @@ pub fn set_taskbar_progress_value(
 pub fn get_screen_resolution() -> (i32, i32) {
     // use winapi::um::winuser::GetSystemMetrics;
     use windows_sys::Win32::UI::WindowsAndMessaging::GetSystemMetrics;
-    let width = unsafe {
-        GetSystemMetrics(
-            windows_sys::Win32::UI::WindowsAndMessaging::SM_CXSCREEN,
-        )
-    };
-    let height = unsafe {
-        GetSystemMetrics(
-            windows_sys::Win32::UI::WindowsAndMessaging::SM_CYSCREEN,
-        )
-    };
+    let width =
+        unsafe { GetSystemMetrics(windows_sys::Win32::UI::WindowsAndMessaging::SM_CXSCREEN) };
+    let height =
+        unsafe { GetSystemMetrics(windows_sys::Win32::UI::WindowsAndMessaging::SM_CYSCREEN) };
     (width, height)
 }
 // impl Host for WindowsActions {
@@ -1494,16 +1359,16 @@ impl Drop for RegKeyGuard {
 }
 
 impl WindowsActions {
-    fn get_font_path() -> std::result::Result<String, Box<dyn std::error::Error>>
-    {
+    fn get_font_path() -> std::result::Result<String, Box<dyn std::error::Error>> {
         let face = unsafe {
-            let mut metrics =
-                windows::Win32::UI::WindowsAndMessaging::NONCLIENTMETRICSW {
-                    cbSize: std::mem::size_of::<windows::Win32::UI::WindowsAndMessaging::NONCLIENTMETRICSW>() as u32,
-                    ..Default::default()
-                };
+            let mut metrics = windows::Win32::UI::WindowsAndMessaging::NONCLIENTMETRICSW {
+                cbSize: std::mem::size_of::<
+                    windows::Win32::UI::WindowsAndMessaging::NONCLIENTMETRICSW,
+                >() as u32,
+                ..Default::default()
+            };
 
-            let result =windows::Win32::UI::WindowsAndMessaging:: SystemParametersInfoW(
+            let result = windows::Win32::UI::WindowsAndMessaging::SystemParametersInfoW(
                 windows::Win32::UI::WindowsAndMessaging::SPI_GETNONCLIENTMETRICS,
                 metrics.cbSize,
                 Some((&raw mut metrics).cast()),
@@ -1529,9 +1394,7 @@ impl WindowsActions {
             let mut key = windows::Win32::System::Registry::HKEY::default();
             if windows::Win32::System::Registry::RegOpenKeyExW(
                 windows::Win32::System::Registry::HKEY_LOCAL_MACHINE,
-                windows::core::w!(
-                    "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts"
-                ),
+                windows::core::w!("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts"),
                 0,
                 windows::Win32::System::Registry::KEY_READ,
                 &raw mut key,
@@ -1609,13 +1472,11 @@ impl WindowsActions {
     }
 }
 
+#[cfg(feature = "font_support")]
 impl SystemFontProvider for WindowsActions {
     fn get_system_font_file(
         &self,
-    ) -> std::result::Result<
-        mirl_collections::BinaryData,
-        Box<dyn std::error::Error>,
-    > {
+    ) -> std::result::Result<mirl_collections::BinaryData, Box<dyn std::error::Error>> {
         let path = Self::get_font_path()?;
         Ok(mirl_collections::BinaryData::from_bytes(
             std::fs::read(path)?,
@@ -1643,17 +1504,14 @@ pub fn execute_elevated(
 ) -> std::result::Result<(), String> {
     use windows_sys::Win32::{
         Foundation::FALSE,
-        System::Threading::{
-            CreateProcessW, PROCESS_INFORMATION, STARTUPINFOW,
-        },
+        System::Threading::{CreateProcessW, PROCESS_INFORMATION, STARTUPINFOW},
     };
 
     if !program_path.exists() {
         return Err(format!("Program not found: {}", program_path.display()));
     }
 
-    let Some(mut wide_exe): Option<Vec<u16>> = path_to_wide(program_path)
-    else {
+    let Some(mut wide_exe): Option<Vec<u16>> = path_to_wide(program_path) else {
         return Err("Path is not valid utf8".to_string());
     };
 
@@ -1662,8 +1520,7 @@ pub fn execute_elevated(
         unsafe { program_path.to_str().unwrap_unchecked() },
         args,
     );
-    let mut wide_cmd: Vec<u16> =
-        cmd_line.encode_utf16().chain(std::iter::once(0)).collect();
+    let mut wide_cmd: Vec<u16> = cmd_line.encode_utf16().chain(std::iter::once(0)).collect();
 
     unsafe {
         let mut startup_info: STARTUPINFOW = std::mem::zeroed();
@@ -1713,7 +1570,10 @@ pub fn path_to_wide(path: &std::path::Path) -> Option<Vec<u16>> {
 pub fn string_to_wide(s: &str) -> std::vec::Vec<u16> {
     use std::{ffi::OsStr, os::windows::ffi::OsStrExt};
 
-    OsStr::new(s).encode_wide().chain(std::iter::once(0)).collect()
+    OsStr::new(s)
+        .encode_wide()
+        .chain(std::iter::once(0))
+        .collect()
 }
 use windows_sys::Win32::{
     Foundation::CloseHandle,
@@ -1725,9 +1585,7 @@ pub fn is_elevated(hwnd: windows_sys::Win32::Foundation::HWND) -> bool {
     unsafe {
         let handle = hwnd.cast::<std::ffi::c_void>();
 
-        let mut elevation = TOKEN_ELEVATION {
-            TokenIsElevated: 0,
-        };
+        let mut elevation = TOKEN_ELEVATION { TokenIsElevated: 0 };
 
         let mut ret_size = std::mem::size_of::<TOKEN_ELEVATION>() as u32;
 
@@ -1750,8 +1608,7 @@ impl ElevatedExecution for WindowsActions {
         path: &std::path::Path,
         args: &[&str],
     ) -> Result<(), Box<dyn std::error::Error>> {
-        execute_elevated(path, args)
-            .map_err(Box::<dyn std::error::Error>::from)?;
+        execute_elevated(path, args).map_err(Box::<dyn std::error::Error>::from)?;
         Ok(())
     }
     fn is_in_elevated_mode(
