@@ -1358,132 +1358,133 @@ impl Drop for RegKeyGuard {
     }
 }
 
-impl WindowsActions {
-    fn get_font_path() -> std::result::Result<String, Box<dyn std::error::Error>> {
-        let face = unsafe {
-            let mut metrics = windows::Win32::UI::WindowsAndMessaging::NONCLIENTMETRICSW {
-                cbSize: std::mem::size_of::<
-                    windows::Win32::UI::WindowsAndMessaging::NONCLIENTMETRICSW,
-                >() as u32,
-                ..Default::default()
-            };
-
-            let result = windows::Win32::UI::WindowsAndMessaging::SystemParametersInfoW(
-                windows::Win32::UI::WindowsAndMessaging::SPI_GETNONCLIENTMETRICS,
-                metrics.cbSize,
-                Some((&raw mut metrics).cast()),
-                windows::Win32::UI::WindowsAndMessaging::SYSTEM_PARAMETERS_INFO_UPDATE_FLAGS(0),
-            );
-
-            if result == false {
-                return Err("SystemParametersInfoW failed".into());
-            }
-
-            String::from_utf16_lossy(
-                &metrics
-                    .lfMessageFont
-                    .lfFaceName
-                    .iter()
-                    .take_while(|&&c| c != 0)
-                    .copied()
-                    .collect::<Vec<_>>(),
-            )
-        };
-
-        let key = unsafe {
-            let mut key = windows::Win32::System::Registry::HKEY::default();
-            if windows::Win32::System::Registry::RegOpenKeyExW(
-                windows::Win32::System::Registry::HKEY_LOCAL_MACHINE,
-                windows::core::w!("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts"),
-                0,
-                windows::Win32::System::Registry::KEY_READ,
-                &raw mut key,
-            ) != windows::Win32::Foundation::ERROR_SUCCESS
-            {
-                return Err("Failed to open registry".into());
-            }
-            key
-        };
-        let _key_guard = RegKeyGuard(key);
-
-        let fonts_dir = unsafe {
-            let path_ptr = windows::Win32::UI::Shell::SHGetKnownFolderPath(
-                &windows::Win32::UI::Shell::FOLDERID_Fonts,
-                windows::Win32::UI::Shell::KNOWN_FOLDER_FLAG(0),
-                None,
-            )?;
-            let path = path_ptr.to_string()?;
-            windows::Win32::System::Com::CoTaskMemFree(Some(path_ptr.0.cast()));
-            path
-        };
-
-        let mut index = 0u32;
-        loop {
-            let mut name_buf = [0u16; 256];
-            let mut name_len = name_buf.len() as u32;
-            let mut data_buf = [0u16; 256];
-            let mut data_len = (data_buf.len() * 2) as u32;
-
-            let result = unsafe {
-                windows::Win32::System::Registry::RegEnumValueW(
-                    key,
-                    index,
-                    windows::core::PWSTR(name_buf.as_mut_ptr()),
-                    &raw mut name_len,
-                    None,
-                    None,
-                    Some(data_buf.as_mut_ptr().cast::<u8>()),
-                    Some(&raw mut data_len),
-                )
-            };
-
-            if result.is_err() {
-                break;
-            }
-
-            let name = String::from_utf16_lossy(&name_buf[..name_len as usize]);
-            let entry_face = name
-                .trim_end_matches(" (TrueType)")
-                .trim_end_matches(" (OpenType)");
-
-            if entry_face == face {
-                let file = String::from_utf16_lossy(
-                    &data_buf
-                        .iter()
-                        .take_while(|&&c| c != 0)
-                        .copied()
-                        .collect::<Vec<_>>(),
-                );
-
-                // Some registry entries already contain an absolute path.
-                let path = if file.contains('\\') || file.contains('/') {
-                    file
-                } else {
-                    format!("{fonts_dir}\\{file}")
-                };
-
-                return Ok(path);
-            }
-
-            index += 1;
-        }
-
-        Err("font not found".into())
-    }
-}
-
 #[cfg(feature = "font_support")]
 impl SystemFontProvider for WindowsActions {
     fn get_system_font_file(
         &self,
     ) -> std::result::Result<mirl_collections::BinaryData, Box<dyn std::error::Error>> {
-        let path = Self::get_font_path()?;
+        let path = get_font_path()?;
         Ok(mirl_collections::BinaryData::from_bytes(
             std::fs::read(path)?,
             mirl_collections::GenericDataType::Font,
         ))
     }
 }
+/// Get the font the os is using
+/// 
+/// # Errors
+/// When no font can be found
+pub fn get_font_path() -> std::result::Result<String, Box<dyn std::error::Error>> {
+    let face = unsafe {
+        let mut metrics = windows::Win32::UI::WindowsAndMessaging::NONCLIENTMETRICSW {
+            cbSize: std::mem::size_of::<windows::Win32::UI::WindowsAndMessaging::NONCLIENTMETRICSW>(
+            ) as u32,
+            ..Default::default()
+        };
+
+        let result = windows::Win32::UI::WindowsAndMessaging::SystemParametersInfoW(
+            windows::Win32::UI::WindowsAndMessaging::SPI_GETNONCLIENTMETRICS,
+            metrics.cbSize,
+            Some((&raw mut metrics).cast()),
+            windows::Win32::UI::WindowsAndMessaging::SYSTEM_PARAMETERS_INFO_UPDATE_FLAGS(0),
+        );
+
+        if result == false {
+            return Err("SystemParametersInfoW failed".into());
+        }
+
+        String::from_utf16_lossy(
+            &metrics
+                .lfMessageFont
+                .lfFaceName
+                .iter()
+                .take_while(|&&c| c != 0)
+                .copied()
+                .collect::<Vec<_>>(),
+        )
+    };
+
+    let key = unsafe {
+        let mut key = windows::Win32::System::Registry::HKEY::default();
+        if windows::Win32::System::Registry::RegOpenKeyExW(
+            windows::Win32::System::Registry::HKEY_LOCAL_MACHINE,
+            windows::core::w!("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts"),
+            0,
+            windows::Win32::System::Registry::KEY_READ,
+            &raw mut key,
+        ) != windows::Win32::Foundation::ERROR_SUCCESS
+        {
+            return Err("Failed to open registry".into());
+        }
+        key
+    };
+    let _key_guard = RegKeyGuard(key);
+
+    let fonts_dir = unsafe {
+        let path_ptr = windows::Win32::UI::Shell::SHGetKnownFolderPath(
+            &windows::Win32::UI::Shell::FOLDERID_Fonts,
+            windows::Win32::UI::Shell::KNOWN_FOLDER_FLAG(0),
+            None,
+        )?;
+        let path = path_ptr.to_string()?;
+        windows::Win32::System::Com::CoTaskMemFree(Some(path_ptr.0.cast()));
+        path
+    };
+
+    let mut index = 0u32;
+    loop {
+        let mut name_buf = [0u16; 256];
+        let mut name_len = name_buf.len() as u32;
+        let mut data_buf = [0u16; 256];
+        let mut data_len = (data_buf.len() * 2) as u32;
+
+        let result = unsafe {
+            windows::Win32::System::Registry::RegEnumValueW(
+                key,
+                index,
+                windows::core::PWSTR(name_buf.as_mut_ptr()),
+                &raw mut name_len,
+                None,
+                None,
+                Some(data_buf.as_mut_ptr().cast::<u8>()),
+                Some(&raw mut data_len),
+            )
+        };
+
+        if result.is_err() {
+            break;
+        }
+
+        let name = String::from_utf16_lossy(&name_buf[..name_len as usize]);
+        let entry_face = name
+            .trim_end_matches(" (TrueType)")
+            .trim_end_matches(" (OpenType)");
+
+        if entry_face == face {
+            let file = String::from_utf16_lossy(
+                &data_buf
+                    .iter()
+                    .take_while(|&&c| c != 0)
+                    .copied()
+                    .collect::<Vec<_>>(),
+            );
+
+            // Some registry entries already contain an absolute path.
+            let path = if file.contains('\\') || file.contains('/') {
+                file
+            } else {
+                format!("{fonts_dir}\\{file}")
+            };
+
+            return Ok(path);
+        }
+
+        index += 1;
+    }
+
+    Err("font not found".into())
+}
+
 /// Execute a program with admin (elevated) privileges on Windows.
 /// If permission wasn't given, the given program will still be executed.
 ///

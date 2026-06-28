@@ -1,5 +1,4 @@
 use mirl_buffer::Buffer;
-use mirl_collections::BinaryData;
 // TODO: Replace bool returns with Result<(), ()>
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -155,6 +154,7 @@ impl<S: Screen> ObjectInCenterOfScreen for S {
         )
     }
 }
+
 #[cfg(feature = "font_support")]
 /// Get the system font
 pub trait SystemFontProvider {
@@ -162,7 +162,9 @@ pub trait SystemFontProvider {
     ///
     /// # Errors
     /// Plenty of things can go wrong from the file being hidden to the Os refusing to answer
-    fn get_system_font_file(&self) -> Result<BinaryData, Box<dyn std::error::Error>>;
+    fn get_system_font_file(
+        &self,
+    ) -> Result<mirl_collections::BinaryData, Box<dyn std::error::Error>>;
     /// Get a font file, use [`to_font`](FileData::to_font) to convert the file into a font
     ///
     /// # Errors
