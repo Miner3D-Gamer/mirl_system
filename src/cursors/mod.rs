@@ -77,10 +77,7 @@ impl CursorType<()> for NativeCursor {
         Ok(())
     }
     fn new(raw_cursor: RawCursor) -> Result<Self, LoadCursorError> {
-        if !is_valid_cursor_metrics(
-            &raw_cursor.image,
-            raw_cursor.image.get_size(),
-        ) {
+        if !is_valid_cursor_metrics(&raw_cursor.image, raw_cursor.image.get_size()) {
             return Err(LoadCursorError::InvalidImageData(
                 "Invalid metrics".to_string(),
             ));

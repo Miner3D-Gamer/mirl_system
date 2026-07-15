@@ -12,11 +12,7 @@ impl MiriActions {
     }
 }
 impl SetWindowPosition for MiriActions {
-    fn set_window_position(
-        _handle: &raw_window_handle::RawWindowHandle,
-        _x: i32,
-        _y: i32,
-    ) -> bool {
+    fn set_window_position(_handle: &raw_window_handle::RawWindowHandle, _x: i32, _y: i32) -> bool {
         false
     }
 }
@@ -29,28 +25,19 @@ impl DefaultWindowing for MiriActions {
         false
     }
 
-    fn get_window_position(
-        _handle: &raw_window_handle::RawWindowHandle,
-    ) -> (i32, i32) {
+    fn get_window_position(_handle: &raw_window_handle::RawWindowHandle) -> (i32, i32) {
         (0, 0)
     }
 
-    fn get_window_size(
-        _handle: &raw_window_handle::RawWindowHandle,
-    ) -> (i32, i32) {
+    fn get_window_size(_handle: &raw_window_handle::RawWindowHandle) -> (i32, i32) {
         (0, 0)
     }
 
-    fn get_window_hitbox_size(
-        _handle: &raw_window_handle::RawWindowHandle,
-    ) -> (i32, i32) {
+    fn get_window_hitbox_size(_handle: &raw_window_handle::RawWindowHandle) -> (i32, i32) {
         (0, 0)
     }
 
-    fn set_window_size(
-        _handle: &raw_window_handle::RawWindowHandle,
-        _size: (i32, i32),
-    ) -> bool {
+    fn set_window_size(_handle: &raw_window_handle::RawWindowHandle, _size: (i32, i32)) -> bool {
         false
     }
 }
@@ -63,18 +50,12 @@ impl Transparency for MiriActions {
         false
     }
 
-    fn set_window_opacity(
-        _handle: &raw_window_handle::RawWindowHandle,
-        _opacity: u8,
-    ) -> bool {
+    fn set_window_opacity(_handle: &raw_window_handle::RawWindowHandle, _opacity: u8) -> bool {
         false
     }
 }
 impl Decoration for MiriActions {
-    fn set_window_borderless(
-        _handle: &raw_window_handle::RawWindowHandle,
-        _boolean: bool,
-    ) -> bool {
+    fn set_window_borderless(_handle: &raw_window_handle::RawWindowHandle, _boolean: bool) -> bool {
         false
     }
 }

@@ -214,8 +214,7 @@ use std::{ffi::CString, ptr};
 use x11::xlib::*;
 
 use crate::system::action::{
-    CpuPriority, Decoration, Default, Host, LoadingState, Misc, Screen,
-    TaskBar, Transparency,
+    CpuPriority, Decoration, Default, Host, LoadingState, Misc, Screen, TaskBar, Transparency,
 };
 /// `OsImplementation` for Linux
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

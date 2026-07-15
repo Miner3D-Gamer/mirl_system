@@ -1371,7 +1371,7 @@ impl SystemFontProvider for WindowsActions {
     }
 }
 /// Get the font the os is using
-/// 
+///
 /// # Errors
 /// When no font can be found
 pub fn get_font_path() -> std::result::Result<String, Box<dyn std::error::Error>> {
